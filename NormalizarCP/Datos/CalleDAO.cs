@@ -90,7 +90,7 @@ namespace NormalizarCP.Datos
         /// </summary>
         /// <param name="list"></param>
         /// <param name="nombreArchivo"></param>
-        public static void cpToExcel(List<Calle> list, string nombreArchivo)
+        public static void cpsToExcel(List<Calle> list, string nombreArchivo)
         {
             Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
 
@@ -126,6 +126,55 @@ namespace NormalizarCP.Datos
                 ws.Cells[fila, 5] = calle.cp;
                 fila++;
             }
+
+            ws.Rows.WrapText = false;
+            ws.Columns.WrapText = false;
+            xlApp.DisplayAlerts = false;
+            wb.SaveAs(@"D:\Mapas\" + nombreArchivo, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            wb.Close();
+            xlApp.Quit();
+        }
+
+        /// <summary>
+        /// Copia un registro scrapeado en el archivo indicado
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="nombreArchivo"></param>
+        public static void cpToExcel(Calle calle, string nombreArchivo)
+        {
+            Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+
+
+            if (xlApp == null)
+            {
+                Console.WriteLine("EXCEL could not be started. Check that your office installation and project references are correct.");
+                return;
+            }
+
+            xlApp.Visible = false;
+            
+            Microsoft.Office.Interop.Excel.Workbook wb = xlApp.Workbooks.Open(@"D:\Mapas\" + nombreArchivo);
+            Microsoft.Office.Interop.Excel._Worksheet ws = wb.Sheets[1];
+
+            if (ws == null)
+            {
+                Console.WriteLine("Worksheet could not be created. Check that your office installation and project references are correct.");
+            }
+
+            Microsoft.Office.Interop.Excel.Range xlRange = ws.UsedRange;
+
+            int rowCount = xlRange.Rows.Count;
+            int colCount = xlRange.Columns.Count;
+
+            int fila = rowCount + 1;
+
+            ws.Cells[fila, 1] = calle.id;
+            ws.Cells[fila, 2] = calle.nro_zona;
+            ws.Cells[fila, 3] = calle.calle;
+            ws.Cells[fila, 4] = calle.altura_ini;
+            ws.Cells[fila, 5] = calle.cp;
+            fila++;
 
             ws.Rows.WrapText = false;
             ws.Columns.WrapText = false;
